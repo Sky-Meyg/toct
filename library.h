@@ -1,10 +1,18 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 #include <functional>
 
 namespace tOct
 {
+	enum class Notation
+	{
+		INVALID,
+		SYMBOLIC,
+		OCTAL,
+		SCRIPT
+	};
+
 	enum class Rows
 	{
 		USER = 0,
@@ -26,7 +34,7 @@ namespace tOct
 	const char SYMBOLIC_WRITE='w';
 	const char SYMBOLIC_EXECUTE='x';
 	const char SYMBOLIC_EMPTY='-';
-	const std::unordered_map<Columns,char> symbolicValues={
+	const std::unordered_map<Columns,char> symbolicColumns={
 		{ Columns::READ, SYMBOLIC_READ },
 		{ Columns::WRITE, SYMBOLIC_WRITE },
 		{ Columns::EXECUTE, SYMBOLIC_EXECUTE }
@@ -35,7 +43,7 @@ namespace tOct
 	const unsigned short OCTAL_WRITE=2;
 	const unsigned short OCTAL_EXECUTE=1;
 	const unsigned short OCTAL_EMPTY=0;
-	const std::unordered_map<Columns,unsigned short> octalValues={
+	const std::unordered_map<Columns,unsigned short> octalColumns={
 		{ Columns::READ, OCTAL_READ },
 		{ Columns::WRITE, OCTAL_WRITE },
 		{ Columns::EXECUTE, OCTAL_EXECUTE }
@@ -46,6 +54,8 @@ namespace tOct
 	
 	typedef std::array<std::array<unsigned short,static_cast<int>(Columns::COUNT)>,static_cast<int>(Rows::COUNT)> Grid;
 
+	const Notation identifyInput(const std::string &input);
+	
 	const Grid parseOctal(std::string input);
 	const Grid parseSymbolic(std::string input);
 	std::string toOctal(const Grid &input);

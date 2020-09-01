@@ -45,7 +45,13 @@ int main(int argc,char *argv[])
 	//toOctal(input);
 	//tOct::toSymbolic(input);
 	//std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
-	std::cout << tOct::toSymbolic(tOct::parseOctal(input)) << std::endl;
+	//std::cout << tOct::toSymbolic(tOct::parseOctal(input)) << std::endl;
 	
-	return 0;
+	switch (tOct::identifyInput(input))
+	{
+		case tOct::Notation::INVALID:
+			return raiseError(ErrorCodes::INVALID_SYMBOL);
+	}
+	
+	return static_cast<int>(ErrorCodes::OK);
 }

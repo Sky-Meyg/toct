@@ -1,9 +1,47 @@
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include "library.h"
 
 namespace tOct
 {
+	const Notation identifyInput(const std::string &input)
+	{
+		std::unordered_set<char> symbolicValues({SYMBOLIC_EMPTY});
+		for (const std::pair<const Columns,char> &value : symbolicColumns) symbolicValues.insert(value.second);
+		std::unordered_set<char> octalValues({OCTAL_EMPTY+CHAR_ZERO,(OCTAL_READ+OCTAL_WRITE)+CHAR_ZERO,(OCTAL_READ+OCTAL_WRITE+OCTAL_EXECUTE)+CHAR_ZERO,(OCTAL_READ+OCTAL_EXECUTE)+CHAR_ZERO,(OCTAL_WRITE+OCTAL_EXECUTE)+CHAR_ZERO});
+		for (const std::pair<const Columns,char> &value : symbolicColumns) symbolicValues.insert(value.second+CHAR_ZERO);
+
+		std::unordered_set<char> *values=nullptr;
+		Notation result=Notation::INVALID;
+		for (const char candidate : input)
+		{
+			if (!values)
+			{
+				if (symbolicValues.find(candidate) != symbolicValues.end())
+				{
+					values=&symbolicValues;
+					result=Notation::SYMBOLIC;
+					continue;
+				}
+				
+				if (octalValues.find(candidate) != octalValues.end())
+				{
+					values=&octalValues;
+					result=Notation::OCTAL;
+					continue;
+				}
+				
+				return Notation::INVALID;
+			}
+			else
+			{
+				if (values->find(candidate) == values->end()) return Notation::INVALID;
+			}
+		}
+		return result;
+	}
+	
 	Grid& iterateGrid(Grid &grid,const std::function<void(int row,int column,unsigned short &value)> &Operation)
 	{
 		for (int row=0; row < static_cast<int>(Rows::COUNT); row++)
@@ -35,10 +73,10 @@ namespace tOct
 		Grid output;
 		return iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
 			Columns columnType=static_cast<Columns>(column);
-			if (octalValues.at(columnType) <= input[row]-CHAR_ZERO)
+			if (octalColumns.at(columnType) <= input[row]-CHAR_ZERO)
 			{
-				input[row]-=octalValues.at(columnType);
-				gridValue=octalValues.at(columnType);
+				input[row]-=octalColumns.at(columnType);
+				gridValue=octalColumns.at(columnType);
 			}
 			else
 			{
@@ -56,9 +94,9 @@ namespace tOct
 		return iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
 			char candidate=input[column+(static_cast<int>(Rows::COUNT)*row)];
 			Columns columnType=static_cast<Columns>(column);
-			if (candidate == symbolicValues.at(columnType))
+			if (candidate == symbolicColumns.at(columnType))
 			{
-				gridValue=octalValues.at(columnType);
+				gridValue=octalColumns.at(columnType);
 			}
 			else
 			{
@@ -90,8 +128,8 @@ namespace tOct
 		std::string output;
 		iterateGrid(input,[&output](int row,int column,const unsigned short &gridValue) {
 			Columns columnType=static_cast<Columns>(column);
-			if (gridValue == octalValues.at(columnType))
-				output+=symbolicValues.at(columnType);
+			if (gridValue == octalColumns.at(columnType))
+				output+=symbolicColumns.at(columnType);
 			else
 				output+=SYMBOLIC_EMPTY;
 		});
