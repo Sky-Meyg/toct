@@ -4,34 +4,40 @@
 
 namespace tOct
 {
+	Grid& iterateGrid(Grid &grid,const std::function<void(int row,int column,unsigned short &value)> &Operation)
+	{
+		for (int row=0; row < static_cast<int>(Rows::COUNT); row++)
+		{
+			for (int column=0; column < static_cast<int>(Columns::COUNT); column++)
+			{
+				Operation(row,column,grid[row][column]);
+			}
+		}
+		return grid;
+	}
+
 	const Grid parseOctal(std::string input)
 	{
 		if (input.size() > SYMBOLIC_MASK_MAX_LENGTH) input=input.substr(0,SYMBOLIC_MASK_MAX_LENGTH);
 		if (input.size() < SYMBOLIC_MASK_MAX_LENGTH) input.append(SYMBOLIC_MASK_MAX_LENGTH-input.size(),'-');
 
 		Grid output;
-		for (int row=0; row < static_cast<int>(Rows::COUNT); row++)
-		{
-			for (int column=0; column < static_cast<int>(Columns::COUNT); column++)
+		return iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
+			char candidate=input[column+(static_cast<int>(Rows::COUNT)*row)];
+			Columns columnType=static_cast<Columns>(column);
+			if (candidate == symbolicValues.at(columnType))
 			{
-				char candidate=input[column+(static_cast<int>(Rows::COUNT)*row)];
-				Columns columnType=static_cast<Columns>(column);
-				unsigned short &gridValue=output[row][static_cast<int>(columnType)];
-				if (candidate == symbolicValues.at(columnType))
-				{
-					gridValue=octalValues.at(columnType);
-				}
-				else
-				{
-					if (candidate == SYMBOLIC_EMPTY)
-						gridValue=0;
-					// TODO: handle situation where symbol is neither set nor '-'
-					/*else
-						return false;*/
-				}
+				gridValue=octalValues.at(columnType);
 			}
-		}		
-		return output;
+			else
+			{
+				if (candidate == SYMBOLIC_EMPTY)
+					gridValue=0;
+				// TODO: handle situation where symbol is neither set nor '-'
+				/*else
+					return false;*/
+			}
+		});
 	}
 
 	std::string toOctal(const Grid &input)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 
 namespace tOct
 {
@@ -47,4 +48,6 @@ namespace tOct
 	const Grid parseOctal(std::string input);
 	std::string toOctal(const Grid &input);
 	bool toSymbolic(std::string &input);
+	
+	Grid& iterateGrid(Grid &grid,const std::function<void(int row,int column,unsigned short &value)> &Operation);
 }
