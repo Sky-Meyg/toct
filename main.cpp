@@ -45,7 +45,7 @@ int main(int argc,char *argv[])
 	//toOctal(input);
 	//tOct::toSymbolic(input);
 	//std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
-	std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
+	std::cout << tOct::toSymbolic(tOct::parseOctal(input)) << std::endl;
 	
 	return 0;
 }
