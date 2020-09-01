@@ -35,6 +35,7 @@ enum class Columns
 };
 
 const unsigned short SYMBOLIC_MASK_MAX_LENGTH=9;
+const unsigned short OCTAL_MASK_MAX_LENGTH=4;
 
 bool toOctal(std::string &input)
 {
@@ -59,8 +60,42 @@ bool toOctal(std::string &input)
 	return true;
 }
 
-bool toSymbolic()
+bool toSymbolic(std::string &input)
 {
+	if (input.size() > OCTAL_MASK_MAX_LENGTH) input=input.substr(input.size()-OCTAL_MASK_MAX_LENGTH,OCTAL_MASK_MAX_LENGTH);
+	if (input.size() < OCTAL_MASK_MAX_LENGTH)
+	{
+		return false; // return error string here
+	}
+
+	std::string symbolGroups[static_cast<int>(Rows::COUNT)];
+	for (int row=0; row < static_cast<int>(Rows::COUNT); row++)
+	{
+		int octal=input[row+1]-48;
+		std::cout << octal << std::endl;
+		// even means we know we don't have an execute bit set
+		if (octal % 2 == 0)
+		{
+			if (octal > 2)
+			{
+				if (octal > 4)
+					symbolGroups[row]="rw-";
+				else
+					symbolGroups[row]="-w-";
+			}
+			else
+			{
+				symbolGroups[row]="r--";
+			}
+		}
+		else
+		{
+		}
+	}
+	
+	for (const std::string &group : symbolGroups) std::cout << group;
+	std::cout << std::endl;
+	return true;
 }
 
 const int raiseError(const ErrorCodes requestedCode)
@@ -87,7 +122,8 @@ int main(int argc,char *argv[])
 	
 	std::string input=argv[1];
 	if (input.size() < 1) return raiseError(ErrorCodes::TOO_FEW_ARGUMENTS);
-	toOctal(input);
+	//toOctal(input);
+	toSymbolic(input);
 	
 	return 0;
 }
