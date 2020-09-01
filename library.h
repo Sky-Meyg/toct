@@ -17,7 +17,7 @@ namespace tOct
 	{
 		USER = 0,
 		GROUP = 1,
-		EXECUTE = 2,
+		OTHER = 2,
 		COUNT = 3
 	};
 
