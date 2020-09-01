@@ -54,13 +54,11 @@ namespace tOct
 	
 	typedef std::array<std::array<unsigned short,static_cast<int>(Columns::COUNT)>,static_cast<int>(Rows::COUNT)> Grid;
 
+	const char numberToCharacter(const unsigned int number) { return number+CHAR_ZERO; }
 	const Notation identifyInput(const std::string &input);
 	
 	const Grid parseOctal(std::string input);
 	const Grid parseSymbolic(std::string input);
 	std::string toOctal(const Grid &input);
 	std::string toSymbolic(const Grid &input);
-	
-	Grid& iterateGrid(Grid &grid,const std::function<void(int row,int column,unsigned short &value)> &Operation);
-	void iterateGrid(const Grid &grid,const std::function<void(int row,int column,const unsigned short &value)> &Operation);
 }

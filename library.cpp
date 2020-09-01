@@ -1,47 +1,9 @@
 #include <iostream>
 #include <unordered_map>
-#include <unordered_set>
 #include "library.h"
 
 namespace tOct
 {
-	const Notation identifyInput(const std::string &input)
-	{
-		std::unordered_set<char> symbolicValues({SYMBOLIC_EMPTY});
-		for (const std::pair<const Columns,char> &value : symbolicColumns) symbolicValues.insert(value.second);
-		std::unordered_set<char> octalValues({OCTAL_EMPTY+CHAR_ZERO,(OCTAL_READ+OCTAL_WRITE)+CHAR_ZERO,(OCTAL_READ+OCTAL_WRITE+OCTAL_EXECUTE)+CHAR_ZERO,(OCTAL_READ+OCTAL_EXECUTE)+CHAR_ZERO,(OCTAL_WRITE+OCTAL_EXECUTE)+CHAR_ZERO});
-		for (const std::pair<const Columns,char> &value : symbolicColumns) symbolicValues.insert(value.second+CHAR_ZERO);
-
-		std::unordered_set<char> *values=nullptr;
-		Notation result=Notation::INVALID;
-		for (const char candidate : input)
-		{
-			if (!values)
-			{
-				if (symbolicValues.find(candidate) != symbolicValues.end())
-				{
-					values=&symbolicValues;
-					result=Notation::SYMBOLIC;
-					continue;
-				}
-				
-				if (octalValues.find(candidate) != octalValues.end())
-				{
-					values=&octalValues;
-					result=Notation::OCTAL;
-					continue;
-				}
-				
-				return Notation::INVALID;
-			}
-			else
-			{
-				if (values->find(candidate) == values->end()) return Notation::INVALID;
-			}
-		}
-		return result;
-	}
-	
 	Grid& iterateGrid(Grid &grid,const std::function<void(int row,int column,unsigned short &value)> &Operation)
 	{
 		for (int row=0; row < static_cast<int>(Rows::COUNT); row++)

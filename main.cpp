@@ -1,5 +1,5 @@
 #include <iostream>
-#include <unordered_map>
+#include <unordered_set>
 #include "library.h"
 
 enum class ErrorCodes
@@ -35,6 +35,49 @@ const int raiseError(const ErrorCodes requestedCode)
 	return returnCode;
 }
 
+const tOct::Notation identifyInput(const std::string &input)
+{
+	std::unordered_set<char> symbolicValues({tOct::SYMBOLIC_EMPTY});
+	for (const std::pair<const tOct::Columns,char> &value : tOct::symbolicColumns) symbolicValues.insert(value.second);
+	std::unordered_set<char> octalValues({
+		tOct::numberToCharacter(tOct::OCTAL_EMPTY),
+		tOct::numberToCharacter(tOct::OCTAL_READ+tOct::OCTAL_WRITE),
+		tOct::numberToCharacter(tOct::OCTAL_READ+tOct::OCTAL_WRITE+tOct::OCTAL_EXECUTE),
+		tOct::numberToCharacter(tOct::OCTAL_READ+tOct::OCTAL_EXECUTE),
+		tOct::numberToCharacter(tOct::OCTAL_WRITE+tOct::OCTAL_EXECUTE)
+	});
+	for (const std::pair<const tOct::Columns,unsigned short> &value : tOct::octalColumns) octalValues.insert(tOct::numberToCharacter(value.second));
+
+	std::unordered_set<char> *values=nullptr;
+	tOct::Notation result=tOct::Notation::INVALID;
+	for (const char candidate : input)
+	{
+		if (!values)
+		{
+			if (symbolicValues.find(candidate) != symbolicValues.end())
+			{
+				values=&symbolicValues;
+				result=tOct::Notation::SYMBOLIC;
+				continue;
+			}
+			
+			if (octalValues.find(candidate) != octalValues.end())
+			{
+				values=&octalValues;
+				result=tOct::Notation::OCTAL;
+				continue;
+			}
+			
+			return tOct::Notation::INVALID;
+		}
+		else
+		{
+			if (values->find(candidate) == values->end()) return tOct::Notation::INVALID;
+		}
+	}
+	return result;
+}
+
 int main(int argc,char *argv[])
 {
 	// need at least one command line argument
@@ -47,10 +90,16 @@ int main(int argc,char *argv[])
 	//std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
 	//std::cout << tOct::toSymbolic(tOct::parseOctal(input)) << std::endl;
 	
-	switch (tOct::identifyInput(input))
+	switch (identifyInput(input))
 	{
 		case tOct::Notation::INVALID:
 			return raiseError(ErrorCodes::INVALID_SYMBOL);
+		case tOct::Notation::OCTAL:
+			std::cout << tOct::toSymbolic(tOct::parseOctal(input));
+			break;
+		case tOct::Notation::SYMBOLIC:
+			std::cout << tOct::toOctal(tOct::parseSymbolic(input));
+			break;
 	}
 	
 	return static_cast<int>(ErrorCodes::OK);
