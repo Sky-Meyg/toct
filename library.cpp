@@ -1,4 +1,3 @@
-#include <iostream>
 #include <unordered_map>
 #include "library.h"
 
@@ -64,9 +63,8 @@ namespace tOct
 			{
 				if (candidate == SYMBOLIC_EMPTY)
 					gridValue=0;
-				// TODO: handle situation where symbol is neither set nor '-'
-				/*else
-					return false;*/
+				else
+					throw std::runtime_error(ERROR_SYMBOLIC_INVALID);
 			}
 		});
 	}

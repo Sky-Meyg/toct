@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 #include <functional>
 
@@ -70,4 +71,7 @@ namespace tOct
 	std::string toOctal(const Grid &input);
 	std::string toSymbolic(const Grid &input);
 	std::string toScripted(const Grid &input);
+	
+	const std::string ERROR_SYMBOLIC_INVALID="Invalid character encountered parsing symbolic notation";
+	const std::string ERROR_OCTAL_INVALID="Invalid character encountered parsing octal notation";
 }
