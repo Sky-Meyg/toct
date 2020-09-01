@@ -1,5 +1,7 @@
 #include <iostream>
 #include <unordered_set>
+#include <stdio.h>
+#include <unistd.h>
 #include "library.h"
 
 enum class ErrorCodes
@@ -85,21 +87,30 @@ int main(int argc,char *argv[])
 	
 	std::string input=argv[1];
 	if (input.size() < 1) return raiseError(ErrorCodes::TOO_FEW_ARGUMENTS);
-	//toOctal(input);
-	//tOct::toSymbolic(input);
-	//std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
-	//std::cout << tOct::toSymbolic(tOct::parseOctal(input)) << std::endl;
 	
+	bool terminal=isatty(fileno(stdout));
 	switch (identifyInput(input))
 	{
 		case tOct::Notation::INVALID:
 			return raiseError(ErrorCodes::INVALID_SYMBOL);
 		case tOct::Notation::OCTAL:
-			std::cout << tOct::toSymbolic(tOct::parseOctal(input));
+		{
+			const tOct::Grid grid=tOct::parseOctal(input);
+			if (terminal)
+				std::cout << tOct::toSymbolic(grid) << std::endl;
+			else
+				std::cout << tOct::toScripted(grid);
 			break;
+		}
 		case tOct::Notation::SYMBOLIC:
-			std::cout << tOct::toOctal(tOct::parseSymbolic(input));
+		{
+			const tOct::Grid grid=tOct::parseSymbolic(input);
+			if (terminal)
+				std::cout << tOct::toOctal(grid) << std::endl;
+			else
+				std::cout << tOct::toScripted(grid);
 			break;
+		}
 	}
 	
 	return static_cast<int>(ErrorCodes::OK);

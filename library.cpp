@@ -97,4 +97,27 @@ namespace tOct
 		});
 		return output;
 	}
+	
+	std::string toScripted(const Grid &input)
+	{
+		std::string outputRows[static_cast<int>(Rows::COUNT)];
+		iterateGrid(input,[&outputRows](int row,int column,const unsigned short &gridValue) {
+			Columns columnType=static_cast<Columns>(column);
+			if (gridValue == octalColumns.at(columnType)) outputRows[row]+=symbolicColumns.at(columnType);
+		});
+		std::string output;
+		if (outputRows[0].size() > 0)
+		{
+			output.push_back(scriptedRows.at(static_cast<Rows>(0)));
+			output.append("="+outputRows[0]);
+		}
+		for (int row=1; row < static_cast<int>(Rows::COUNT); row++)
+		{
+			if (outputRows[row].size() < 1) continue;
+			output.append(",");
+			output.push_back(scriptedRows.at(static_cast<Rows>(row)));
+			output.append("="+outputRows[row]);
+		}
+		return output;
+	}
 }

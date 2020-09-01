@@ -48,6 +48,14 @@ namespace tOct
 		{ Columns::WRITE, OCTAL_WRITE },
 		{ Columns::EXECUTE, OCTAL_EXECUTE }
 	};
+	const char SCRIPTED_USER='u';
+	const char SCRIPTED_GROUP='g';
+	const char SCRIPTED_OTHER='o';
+	const std::unordered_map<Rows,char> scriptedRows={
+		{ Rows::USER, SCRIPTED_USER },
+		{ Rows::GROUP, SCRIPTED_GROUP },
+		{ Rows::OTHER, SCRIPTED_OTHER },
+	};
 
 	const unsigned short SYMBOLIC_MASK_MAX_LENGTH=9;
 	const unsigned short OCTAL_MASK_MAX_LENGTH=4;
@@ -61,4 +69,5 @@ namespace tOct
 	const Grid parseSymbolic(std::string input);
 	std::string toOctal(const Grid &input);
 	std::string toSymbolic(const Grid &input);
+	std::string toScripted(const Grid &input);
 }
