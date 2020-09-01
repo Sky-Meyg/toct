@@ -31,10 +31,9 @@ namespace tOct
 		if (input.size() > OCTAL_MASK_MAX_LENGTH) input=input.substr(0,OCTAL_MASK_MAX_LENGTH); // TODO: error handle a mask that is too long
 		// if (input.size() < OCTAL_MASK_MAX_LENGTH) { } // TODO: handle an octal mask that is too short
 		input=input.substr(1,3); // TODO: // handle setuid/setgid/sticky bit
-		Grid output;
-		return iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
+		Grid output=iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
 			Columns columnType=static_cast<Columns>(column);
-			if (octalColumns.at(columnType) <= input[row]-CHAR_ZERO)
+			if (octalColumns.at(columnType) <= characterToNumber(input[row]))
 			{
 				input[row]-=octalColumns.at(columnType);
 				gridValue=octalColumns.at(columnType);
@@ -44,6 +43,10 @@ namespace tOct
 				gridValue=0;
 			}
 		});
+		unsigned int remainder=0;
+		for (const char &row : input) remainder+=characterToNumber(row);
+		if (remainder > 0) throw std::runtime_error(ERROR_OCTAL_INVALID);
+		return output;
 	}
 
 	const Grid parseSymbolic(std::string input)

@@ -64,6 +64,7 @@ namespace tOct
 	typedef std::array<std::array<unsigned short,static_cast<int>(Columns::COUNT)>,static_cast<int>(Rows::COUNT)> Grid;
 
 	const char numberToCharacter(const unsigned int number) { return number+CHAR_ZERO; }
+	const unsigned short characterToNumber(const char character) { return character-CHAR_ZERO; }
 	const Notation identifyInput(const std::string &input);
 	
 	const Grid parseOctal(std::string input);
