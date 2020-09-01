@@ -52,6 +52,26 @@ namespace tOct
 		}
 		return output;
 	}
+	
+	const Grid parseSymbolic(std::string input)
+	{
+		if (input.size() > OCTAL_MASK_MAX_LENGTH) input=input.substr(0,OCTAL_MASK_MAX_LENGTH); // TODO: error handle a mask that is too long
+		// if (input.size() < OCTAL_MASK_MAX_LENGTH) { } // TODO: handle an octal mask that is too short
+		input=input.substr(1,3); // TODO: // handle setuid/setgid/sticky bit
+		Grid output;
+		return iterateGrid(output,[&input](int row,int column,unsigned short &gridValue) {
+			Columns columnType=static_cast<Columns>(column);
+			if (octalValues.at(columnType) <= input[row]-CHAR_ZERO)
+			{
+				input[row]-=octalValues.at(columnType);
+				gridValue=octalValues.at(columnType);
+			}
+			else
+			{
+				gridValue=0;
+			}
+		});
+	}
 
 	bool toSymbolic(std::string &input)
 	{
