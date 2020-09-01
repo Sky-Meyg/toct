@@ -44,7 +44,7 @@ int main(int argc,char *argv[])
 	if (input.size() < 1) return raiseError(ErrorCodes::TOO_FEW_ARGUMENTS);
 	//toOctal(input);
 	//tOct::toSymbolic(input);
-	tOct::parseOctal(input);
+	std::cout << tOct::toOctal(tOct::parseOctal(input)) << std::endl;
 	
 	return 0;
 }

@@ -25,32 +25,26 @@ namespace tOct
 				{
 					if (candidate == SYMBOLIC_EMPTY)
 						gridValue=0;
-					else
-						return false;
+					// TODO: handle situation where symbol is neither set nor '-'
+					/*else
+						return false;*/
 				}
 			}
 		}		
 		return output;
 	}
 
-	bool toOctal(const Grid &input)
-	{		
-		unsigned short output[3]={0,0,0};
-		std::string symbolGroups[static_cast<int>(Rows::COUNT)];
-		//for (int row=0; row < static_cast<int>(Rows::COUNT); row++) symbolGroups[row]=input.substr(static_cast<int>(Rows::COUNT)*row,3);
-		for (int row=0; row < static_cast<int>(Rows::COUNT); row++) std::cout << symbolGroups[row] << std::endl; 
+	std::string toOctal(const Grid &input)
+	{
+		std::string output;
+		output+='0'; // TODO: this is setuid/setgid/sticky bit
 		for (int row=0; row < static_cast<int>(Rows::COUNT); row++)
 		{
-			if (symbolGroups[row][static_cast<int>(Columns::READ)] == 'r') output[row]+=4;
-			if (symbolGroups[row][static_cast<int>(Columns::WRITE)] == 'w') output[row]+=2;
-			if (symbolGroups[row][static_cast<int>(Columns::EXECUTE)] == 'x') output[row]+=1;
+			unsigned short total=0;
+			for (int column=0; column < static_cast<int>(Columns::COUNT); column++) total+=input[row][column]; // TODO: add some error handling for invalid values
+			output+=std::to_string(total);
 		}
-
-		std::cout << "0";
-		for (const unsigned short &octal : output) std::cout << std::to_string(octal);
-		std::cout << std::endl;
-
-		return true;
+		return output;
 	}
 
 	bool toSymbolic(std::string &input)

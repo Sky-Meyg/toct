@@ -45,6 +45,6 @@ namespace tOct
 	typedef std::array<std::array<unsigned short,static_cast<int>(Columns::COUNT)>,static_cast<int>(Rows::COUNT)> Grid;
 
 	const Grid parseOctal(std::string input);
-	bool toOctal(std::string &input);
+	std::string toOctal(const Grid &input);
 	bool toSymbolic(std::string &input);
 }
